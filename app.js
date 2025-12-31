@@ -89,10 +89,6 @@ var budgetController = (function () {
                 e.calcPercentage(data.totals.inc));
         },
 
-        getPercentages() {
-            return data.allItems.exp.map(e => e.percentage);
-        },
-
         getBudget() {
             return {
                 budget: data.budget,
@@ -136,13 +132,13 @@ var UIController = (function () {
     };
 
     return {
-getInput() {
-    return {
-        type: document.querySelector(DOM.inputType).value,
-        description: document.querySelector(DOM.inputDesc).value.trim(),
-        value: Number(document.querySelector(DOM.inputValue).value)
-    };
-},
+        getInput() {
+            return {
+                type: document.querySelector(DOM.inputType).value,
+                description: document.querySelector(DOM.inputDesc).value.trim(),
+                value: Number(document.querySelector(DOM.inputValue).value)
+            };
+        },
 
         addListItem(obj, type) {
             var element = type === 'inc' ? DOM.incList : DOM.expList;
@@ -150,7 +146,7 @@ getInput() {
             <div class="item clearfix" id="${type}-${obj.id}">
                 <div class="item__description">
                     ${obj.description}
-                    <span class="item__delete--btn delete-x">X</span>
+                    <span class="delete-x">X</span>
                 </div>
                 <div class="right clearfix">
                     <div class="item__value">${formatNumber(obj.value, type)}</div>
@@ -197,10 +193,13 @@ getInput() {
         },
 
         addResetButton() {
-            var btn = document.createElement('button');
-            btn.textContent = 'Reset Budget';
-            btn.className = 'reset-btn';
-            document.querySelector('.budget').appendChild(btn);
+            let btn = document.querySelector('.reset-btn');
+            if (!btn) {
+                btn = document.createElement('button');
+                btn.textContent = 'Reset Budget';
+                btn.className = 'reset-btn';
+                document.querySelector('.budget').appendChild(btn);
+            }
             return btn;
         },
 
@@ -223,7 +222,7 @@ var controller = (function (B, UI) {
 
     var addItem = function () {
         var input = UI.getInput();
-        if (input.description.length > 0 && !isNaN(input.value) && input.value > 0) {
+        if (input.description && input.value > 0 && !isNaN(input.value)) {
             var item = B.addItem(input.type, input.description, input.value);
             UI.addListItem(item, input.type);
             UI.clearFields();
@@ -231,13 +230,25 @@ var controller = (function (B, UI) {
         }
     };
 
-    var deleteItem = function (e) {
-        if (!e.target.classList.contains('delete-x')) return;
-        var id = e.target.closest('.item').id;
-        var split = id.split('-');
-        B.deleteItem(split[0], parseInt(split[1]));
-        UI.deleteListItem(id);
-        updateAll();
+    var handleClicks = function (e) {
+
+        // DELETE ITEM
+        if (e.target.classList.contains('delete-x')) {
+            var id = e.target.closest('.item').id;
+            var split = id.split('-');
+            B.deleteItem(split[0], parseInt(split[1]));
+            UI.deleteListItem(id);
+            updateAll();
+        }
+
+        // RESET BUDGET
+        if (e.target.classList.contains('reset-btn')) {
+            if (confirm('Reset all data?')) {
+                B.reset();
+                UI.clearLists();
+                updateAll();
+            }
+        }
     };
 
     return {
@@ -250,34 +261,19 @@ var controller = (function (B, UI) {
             data.allItems.exp.forEach(i => UI.addListItem(i, 'exp'));
             updateAll();
 
-            // ✅ ADD BUTTON
             document.querySelector(UI.getDOM().inputBtn)
                 .addEventListener('click', addItem);
 
-            // ✅ ENTER KEY
             document.addEventListener('keypress', function (e) {
-                if (e.key === 'Enter') {
-                    addItem();
-                }
+                if (e.key === 'Enter') addItem();
             });
 
-            // ✅ DELETE ITEM
-            document.querySelector(UI.getDOM().container)
-                .addEventListener('click', deleteItem);
+            document.addEventListener('click', handleClicks);
 
-            // ✅ RESET BUTTON
-            var resetBtn = UI.addResetButton();
-            resetBtn.addEventListener('click', function () {
-                if (confirm('Reset all data?')) {
-                    B.reset();
-                    UI.clearLists();
-                    updateAll();
-                }
-            });
+            UI.addResetButton();
         }
     };
 
 })(budgetController, UIController);
 
 controller.init();
-
