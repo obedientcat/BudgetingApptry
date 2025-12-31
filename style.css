@@ -68,7 +68,7 @@ body {
 
 .budget__income {
     margin-bottom: 10px;
-    background-color: #8F9779; /* pastel green */
+    background-color: #40e440; /* updated green */
     color: #fff;
 }
 
@@ -144,7 +144,7 @@ body {
 
 .add__btn {
     font-size: 25px;
-    background-color: #8F9779; /* same pastel green for consistency */
+    background-color: #40e440; /* updated green */
     color: #fff;
     border: none;
     border-radius: 5px;
@@ -154,7 +154,7 @@ body {
 }
 
 .add__btn:hover {
-    background-color: #7C886B;
+    background-color: #35c835;
 }
 
 .add__btn:active { transform: translateY(2px); }
@@ -163,7 +163,7 @@ body {
 .add__description:focus,
 .add__value:focus {
     outline: none;
-    border: 1px solid #8F9779;
+    border: 1px solid #40e440;
 }
 
 /***** LISTS *****/
@@ -190,7 +190,7 @@ h2 {
     margin-bottom: 15px;
 }
 
-.icome__title { color: #8F9779; }
+.icome__title { color: #40e440; } /* updated green */
 .expenses__title { color: #A52A2A; }
 
 .item {
@@ -219,7 +219,7 @@ h2 {
 
 .income .item__value,
 .income .item__delete--btn {
-    color: #8F9779;
+    color: #40e440; /* updated green */
 }
 
 .expenses .item__value,
@@ -258,7 +258,7 @@ h2 {
 /***** RESET & DOWNLOAD BUTTONS *****/
 .reset-btn,
 .download-btn {
-    background-color: #A52A2A;
+    background-color: #777; /* gray */
     color: #fff;
     border: none;
     border-radius: 5px;
@@ -271,7 +271,7 @@ h2 {
 
 .reset-btn:hover,
 .download-btn:hover {
-    background-color: #8F1F1F;
+    background-color: #555;
 }
 
 .reset-btn:active,
