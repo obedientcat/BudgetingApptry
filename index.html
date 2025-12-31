@@ -8,15 +8,15 @@
     <title>Budgety</title>
 </head>
 <body>
-    
+
     <div class="top">
         <div class="budget">
             <div class="budget__title">
                 Available Budget in <span class="budget__title--month">%Month%</span>:
             </div>
-            
+
             <div class="budget__value">+ 0.00</div>
-            
+
             <div class="budget__income clearfix">
                 <div class="budget__income--text">Income</div>
                 <div class="right">
@@ -24,7 +24,7 @@
                     <div class="budget__income--percentage">&nbsp;</div>
                 </div>
             </div>
-            
+
             <div class="budget__expenses clearfix">
                 <div class="budget__expenses--text">Expenses</div>
                 <div class="right clearfix">
@@ -32,13 +32,9 @@
                     <div class="budget__expenses--percentage">---</div>
                 </div>
             </div>
-
-            <!-- Hardcoded buttons -->
-            <button id="download-data-btn">Download Data</button>
-            <button id="reset-btn">Reset Budget</button>
         </div>
     </div>
-    
+
     <div class="bottom">
         <div class="add">
             <div class="add__container">
@@ -51,20 +47,26 @@
                 <button class="add__btn"><i class="ion-ios-checkmark-outline"></i></button>
             </div>
         </div>
-        
+
         <div class="container clearfix">
             <div class="income">
                 <h2 class="icome__title">Income</h2>
                 <div class="income__list"></div>
             </div>
-            
+
             <div class="expenses">
                 <h2 class="expenses__title">Expenses</h2>
                 <div class="expenses__list"></div>
             </div>
         </div>
     </div>
-    
+
+    <!-- Control Buttons -->
+    <div class="controls" style="text-align:center; margin: 20px;">
+        <button id="downloadDataBtn">Download Data</button>
+        <button id="resetDataBtn">Reset Budget</button>
+    </div>
+
     <script src="app.js"></script>
 </body>
 </html>
