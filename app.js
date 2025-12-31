@@ -41,7 +41,6 @@ var budgetController = (function () {
         data.totals[type] = sum;
     };
 
-    // ===== LOCAL STORAGE =====
     var saveData = function () {
         localStorage.setItem('budgetData', JSON.stringify(data));
     };
@@ -139,6 +138,7 @@ var budgetController = (function () {
 
 })();
 
+
 // ======================
 // UI CONTROLLER
 // ======================
@@ -157,7 +157,8 @@ var UIController = (function () {
         percentageLabel: '.budget__expenses--percentage',
         container: '.container',
         expensesPercLabel: '.item__percentage',
-        dateLabel: '.budget__title--month'
+        dateLabel: '.budget__title--month',
+        controlsContainer: '.budget'
     };
 
     var formatNumber = function (num, type) {
@@ -169,12 +170,8 @@ var UIController = (function () {
         getInput: function () {
             return {
                 type: document.querySelector(DOMstrings.inputType).value,
-                description: document
-                    .querySelector(DOMstrings.inputDescription)
-                    .value.trim(),
-                value: parseFloat(
-                    document.querySelector(DOMstrings.inputValue).value
-                )
+                description: document.querySelector(DOMstrings.inputDescription).value.trim(),
+                value: parseFloat(document.querySelector(DOMstrings.inputValue).value)
             };
         },
 
@@ -228,23 +225,18 @@ var UIController = (function () {
         displayBudget: function (obj) {
             var type = obj.budget >= 0 ? 'inc' : 'exp';
 
-            document.querySelector(DOMstrings.budgetLabel).textContent =
-                formatNumber(obj.budget, type);
-            document.querySelector(DOMstrings.incomeLabel).textContent =
-                formatNumber(obj.totalInc, 'inc');
-            document.querySelector(DOMstrings.expensesLabel).textContent =
-                formatNumber(obj.totalExp, 'exp');
+            document.querySelector(DOMstrings.budgetLabel).textContent = formatNumber(obj.budget, type);
+            document.querySelector(DOMstrings.incomeLabel).textContent = formatNumber(obj.totalInc, 'inc');
+            document.querySelector(DOMstrings.expensesLabel).textContent = formatNumber(obj.totalExp, 'exp');
 
-            document.querySelector(DOMstrings.percentageLabel).textContent =
-                obj.percentage > 0 ? obj.percentage + '%' : '---';
+            document.querySelector(DOMstrings.percentageLabel).textContent = obj.percentage > 0 ? obj.percentage + '%' : '---';
         },
 
         displayPercentages: function (percentages) {
             var fields = document.querySelectorAll(DOMstrings.expensesPercLabel);
 
             for (var i = 0; i < fields.length; i++) {
-                fields[i].textContent =
-                    percentages[i] > 0 ? percentages[i] + '%' : '---';
+                fields[i].textContent = percentages[i] > 0 ? percentages[i] + '%' : '---';
             }
         },
 
@@ -254,25 +246,45 @@ var UIController = (function () {
                 'January','February','March','April','May','June',
                 'July','August','September','October','November','December'
             ];
-
-            document.querySelector(DOMstrings.dateLabel).textContent =
-                months[now.getMonth()] + ' ' + now.getFullYear();
+            document.querySelector(DOMstrings.dateLabel).textContent = months[now.getMonth()] + ' ' + now.getFullYear();
         },
 
         getDOMstrings: function () {
             return DOMstrings;
+        },
+
+        createControlButtons: function () {
+            var container = document.querySelector(DOMstrings.controlsContainer);
+
+            if (!document.getElementById('reset-btn')) {
+                var resetBtn = document.createElement('button');
+                resetBtn.textContent = 'Reset Budget';
+                resetBtn.id = 'reset-btn';
+                container.appendChild(resetBtn);
+            }
+
+            if (!document.getElementById('download-btn')) {
+                var downloadBtn = document.createElement('button');
+                downloadBtn.textContent = 'Download Data';
+                downloadBtn.id = 'download-btn';
+                container.appendChild(downloadBtn);
+            }
         }
     };
 
 })();
+
 
 // ======================
 // GLOBAL CONTROLLER
 // ======================
 var controller = (function (budgetCtrl, UICtrl) {
 
+    var DOM = UICtrl.getDOMstrings();
+
     var setupEventListeners = function () {
-        var DOM = UICtrl.getDOMstrings();
+
+        UICtrl.createControlButtons();
 
         document.querySelector(DOM.inputBtn).addEventListener('click', ctrlAddItem);
 
@@ -280,37 +292,38 @@ var controller = (function (budgetCtrl, UICtrl) {
             if (e.key === 'Enter') ctrlAddItem();
         });
 
-        document.querySelector(DOM.container)
-            .addEventListener('click', ctrlDeleteItem);
+        document.querySelector(DOM.container).addEventListener('click', function (event) {
+            ctrlDeleteItem(event);
+        });
 
-        // Only add buttons once
-        var budgetDiv = document.querySelector('.budget');
+        document.getElementById('reset-btn').addEventListener('click', function () {
+            if (confirm('Reset all data?')) {
+                budgetCtrl.reset();
+                document.querySelector(DOM.incomeContainer).innerHTML = '';
+                document.querySelector(DOM.expensesContainer).innerHTML = '';
+                updateBudget();
+                updatePercentages();
+            }
+        });
 
-        // RESET BUTTON
-        if (!budgetDiv.querySelector('.reset-btn')) {
-            var resetBtn = document.createElement('button');
-            resetBtn.textContent = 'Reset Budget';
-            resetBtn.className = 'reset-btn';
-            budgetDiv.appendChild(resetBtn);
-            resetBtn.addEventListener('click', function () {
-                if (confirm('Reset all data?')) {
-                    budgetCtrl.reset();
-                    document.querySelector('.income__list').innerHTML = '';
-                    document.querySelector('.expenses__list').innerHTML = '';
-                    updateBudget();
-                    updatePercentages();
-                }
+        document.getElementById('download-btn').addEventListener('click', function () {
+            var data = budgetCtrl.getData();
+            var csv = 'Type,Description,Value\n';
+            data.allItems.inc.forEach(function (item) {
+                csv += `Income,${item.description},${item.value}\n`;
             });
-        }
+            data.allItems.exp.forEach(function (item) {
+                csv += `Expense,${item.description},${item.value}\n`;
+            });
 
-        // DOWNLOAD BUTTON
-        if (!budgetDiv.querySelector('.download-btn')) {
-            var downloadBtn = document.createElement('button');
-            downloadBtn.textContent = 'Download Data';
-            downloadBtn.className = 'download-btn';
-            budgetDiv.appendChild(downloadBtn);
-            downloadBtn.addEventListener('click', function () { downloadCSV(); });
-        }
+            var blob = new Blob([csv], { type: 'text/csv' });
+            var link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'budget_data.csv';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
     };
 
     var updateBudget = function () {
@@ -327,12 +340,7 @@ var controller = (function (budgetCtrl, UICtrl) {
         var input = UICtrl.getInput();
 
         if (input.description !== "" && !isNaN(input.value) && input.value > 0) {
-            var newItem = budgetCtrl.addItem(
-                input.type,
-                input.description,
-                input.value
-            );
-
+            var newItem = budgetCtrl.addItem(input.type, input.description, input.value);
             UICtrl.addListItem(newItem, input.type);
             UICtrl.clearFields();
             updateBudget();
@@ -350,28 +358,6 @@ var controller = (function (budgetCtrl, UICtrl) {
             updateBudget();
             updatePercentages();
         }
-    };
-
-    // CSV download function
-    var downloadCSV = function () {
-        var data = budgetCtrl.getData();
-        var csvContent = "data:text/csv;charset=utf-8,";
-        csvContent += "Type,Description,Value\n";
-
-        data.allItems.inc.forEach(function (item) {
-            csvContent += `Income,${item.description},${item.value}\n`;
-        });
-        data.allItems.exp.forEach(function (item) {
-            csvContent += `Expense,${item.description},${item.value}\n`;
-        });
-
-        var encodedUri = encodeURI(csvContent);
-        var link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "budget_data.csv");
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
     };
 
     return {
