@@ -1,3 +1,10 @@
+// ====== Local Storage Version Check ======
+var currentVersion = '1.0'; // increment this if you release a new script version
+if (localStorage.getItem('budgetVersion') !== currentVersion) {
+    localStorage.clear(); // clear old/corrupted data
+    localStorage.setItem('budgetVersion', currentVersion);
+}
+
 // ======================
 // BUDGET CONTROLLER
 // ======================
