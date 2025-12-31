@@ -14,7 +14,9 @@
             <div class="budget__title">
                 Available Budget in <span class="budget__title--month">%Month%</span>:
             </div>
+            
             <div class="budget__value">+ 0.00</div>
+            
             <div class="budget__income clearfix">
                 <div class="budget__income--text">Income</div>
                 <div class="right">
@@ -22,6 +24,7 @@
                     <div class="budget__income--percentage">&nbsp;</div>
                 </div>
             </div>
+            
             <div class="budget__expenses clearfix">
                 <div class="budget__expenses--text">Expenses</div>
                 <div class="right clearfix">
@@ -29,9 +32,11 @@
                     <div class="budget__expenses--percentage">---</div>
                 </div>
             </div>
-            <div class="budget__buttons" style="margin-top:10px;text-align:center;">
-                <button id="downloadDataBtn">Download Data</button>
-                <button id="resetDataBtn">Reset Budget</button>
+
+            <!-- Buttons -->
+            <div style="margin-top: 15px; text-align:center;">
+                <button id="download-btn">Download Data</button>
+                <button id="reset-btn">Reset Budget</button>
             </div>
         </div>
     </div>
@@ -48,13 +53,13 @@
                 <button class="add__btn"><i class="ion-ios-checkmark-outline"></i></button>
             </div>
         </div>
-
+        
         <div class="container clearfix">
             <div class="income">
                 <h2 class="icome__title">Income</h2>
                 <div class="income__list"></div>
             </div>
-
+            
             <div class="expenses">
                 <h2 class="expenses__title">Expenses</h2>
                 <div class="expenses__list"></div>
