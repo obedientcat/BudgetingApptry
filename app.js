@@ -48,18 +48,7 @@ var budgetController = (function () {
 
     var loadData = function () {
         var stored = localStorage.getItem('budgetData');
-        if (stored) {
-            var tempData = JSON.parse(stored);
-            data.totals = tempData.totals;
-            data.budget = tempData.budget;
-            data.percentage = tempData.percentage;
-            data.allItems.inc = tempData.allItems.inc.map(
-                item => new Income(item.id, item.description, item.value)
-            );
-            data.allItems.exp = tempData.allItems.exp.map(
-                item => new Expense(item.id, item.description, item.value)
-            );
-        }
+        if (stored) data = JSON.parse(stored);
     };
 
     var resetData = function () {
@@ -82,7 +71,12 @@ var budgetController = (function () {
                 ID = 0;
             }
 
-            newItem = type === 'exp' ? new Expense(ID, des, val) : new Income(ID, des, val);
+            if (type === 'exp') {
+                newItem = new Expense(ID, des, val);
+            } else {
+                newItem = new Income(ID, des, val);
+            }
+
             data.allItems[type].push(newItem);
             saveData();
             return newItem;
@@ -92,6 +86,7 @@ var budgetController = (function () {
             var ids = data.allItems[type].map(function (cur) {
                 return cur.id;
             });
+
             var index = ids.indexOf(id);
             if (index !== -1) {
                 data.allItems[type].splice(index, 1);
@@ -102,10 +97,16 @@ var budgetController = (function () {
         calculateBudget: function () {
             calculateTotal('exp');
             calculateTotal('inc');
+
             data.budget = data.totals.inc - data.totals.exp;
-            data.percentage = data.totals.inc > 0
-                ? Math.round((data.totals.exp / data.totals.inc) * 100)
-                : -1;
+
+            if (data.totals.inc > 0) {
+                data.percentage = Math.round(
+                    (data.totals.exp / data.totals.inc) * 100
+                );
+            } else {
+                data.percentage = -1;
+            }
         },
 
         calculatePercentages: function () {
@@ -129,10 +130,11 @@ var budgetController = (function () {
             };
         },
 
-        save: saveData,
         load: loadData,
         reset: resetData,
-        getData: function () { return data; }
+        getData: function () {
+            return data;
+        }
     };
 
 })();
@@ -183,7 +185,9 @@ var UIController = (function () {
                     <div class="right clearfix">
                         <div class="item__value">${formatNumber(obj.value, 'inc')}</div>
                         <div class="item__delete">
-                            <button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button>
+                            <button class="item__delete--btn">
+                                <i class="ion-ios-close-outline"></i>
+                            </button>
                         </div>
                     </div>
                 </div>`;
@@ -196,7 +200,9 @@ var UIController = (function () {
                         <div class="item__value">${formatNumber(obj.value, 'exp')}</div>
                         <div class="item__percentage">---</div>
                         <div class="item__delete">
-                            <button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button>
+                            <button class="item__delete--btn">
+                                <i class="ion-ios-close-outline"></i>
+                            </button>
                         </div>
                     </div>
                 </div>`;
@@ -232,11 +238,17 @@ var UIController = (function () {
 
         displayMonth: function () {
             var now = new Date();
-            var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-            document.querySelector(DOMstrings.dateLabel).textContent = months[now.getMonth()] + ' ' + now.getFullYear();
+            var months = [
+                'January','February','March','April','May','June',
+                'July','August','September','October','November','December'
+            ];
+            document.querySelector(DOMstrings.dateLabel).textContent =
+                months[now.getMonth()] + ' ' + now.getFullYear();
         },
 
-        getDOMstrings: function () { return DOMstrings; }
+        getDOMstrings: function () {
+            return DOMstrings;
+        }
     };
 
 })();
@@ -253,10 +265,9 @@ var controller = (function (budgetCtrl, UICtrl) {
         document.addEventListener('keypress', function (e) {
             if (e.key === 'Enter') ctrlAddItem();
         });
-
         document.querySelector(DOM.container).addEventListener('click', ctrlDeleteItem);
 
-        // REMOVE EXISTING BUTTONS FIRST
+        // REMOVE OLD BUTTONS
         var existingReset = document.querySelector('.reset-btn');
         if (existingReset) existingReset.remove();
         var existingDownload = document.querySelector('.download-btn');
@@ -277,7 +288,7 @@ var controller = (function (budgetCtrl, UICtrl) {
             }
         });
 
-        // DOWNLOAD CSV BUTTON
+        // DOWNLOAD DATA BUTTON
         var downloadBtn = document.createElement('button');
         downloadBtn.textContent = 'Download Data';
         downloadBtn.className = 'download-btn';
@@ -335,8 +346,12 @@ var controller = (function (budgetCtrl, UICtrl) {
             budgetCtrl.load();
 
             var data = budgetCtrl.getData();
-            data.allItems.inc.forEach(function (cur) { UICtrl.addListItem(cur, 'inc'); });
-            data.allItems.exp.forEach(function (cur) { UICtrl.addListItem(cur, 'exp'); });
+            data.allItems.inc.forEach(function (cur) {
+                UICtrl.addListItem(cur, 'inc');
+            });
+            data.allItems.exp.forEach(function (cur) {
+                UICtrl.addListItem(cur, 'exp');
+            });
 
             updateBudget();
             updatePercentages();
