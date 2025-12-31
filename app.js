@@ -11,9 +11,7 @@ var budgetController = (function () {
     };
 
     Expense.prototype.calcPercentage = function (totalIncome) {
-        this.percentage = totalIncome > 0
-            ? Math.round((this.value / totalIncome) * 100)
-            : -1;
+        this.percentage = totalIncome > 0 ? Math.round((this.value / totalIncome) * 100) : -1;
     };
 
     Expense.prototype.getPercentage = function () {
@@ -48,7 +46,19 @@ var budgetController = (function () {
 
     var loadData = function () {
         var stored = localStorage.getItem('budgetData');
-        if (stored) data = JSON.parse(stored);
+        if (stored) {
+            var parsed = JSON.parse(stored);
+            // Reconstruct objects
+            data.allItems.inc = parsed.allItems.inc.map(function (item) {
+                return new Income(item.id, item.description, item.value);
+            });
+            data.allItems.exp = parsed.allItems.exp.map(function (item) {
+                return new Expense(item.id, item.description, item.value);
+            });
+            data.totals = parsed.totals;
+            data.budget = parsed.budget;
+            data.percentage = parsed.percentage;
+        }
     };
 
     var resetData = function () {
@@ -234,14 +244,12 @@ var controller = (function (budgetCtrl, UICtrl) {
         var DOM = UICtrl.getDOMstrings();
 
         document.querySelector(DOM.inputBtn).addEventListener('click', ctrlAddItem);
-
         document.addEventListener('keypress', function (e) {
             if (e.key === 'Enter') ctrlAddItem();
         });
-
         document.querySelector(DOM.container).addEventListener('click', ctrlDeleteItem);
 
-        // CREATE BUTTONS (only once)
+        // Only add buttons once
         if (!document.querySelector('.reset-btn')) {
             var resetBtn = document.createElement('button');
             resetBtn.textContent = 'Reset Budget';
@@ -302,8 +310,7 @@ var controller = (function (budgetCtrl, UICtrl) {
     // CSV Download
     var downloadCSV = function () {
         var data = budgetCtrl.getData();
-        var csvContent = "data:text/csv;charset=utf-8,";
-        csvContent += "Type,Description,Value\n";
+        var csvContent = "data:text/csv;charset=utf-8,Type,Description,Value\n";
         data.allItems.inc.forEach(function(item){
             csvContent += `Income,${item.description},${item.value}\n`;
         });
