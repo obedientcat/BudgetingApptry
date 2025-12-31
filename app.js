@@ -136,13 +136,13 @@ var UIController = (function () {
     };
 
     return {
-        getInput() {
-            return {
-                type: document.querySelector(DOM.inputType).value,
-                description: document.querySelector(DOM.inputDesc).value,
-                value: parseFloat(document.querySelector(DOM.inputValue).value)
-            };
-        },
+getInput() {
+    return {
+        type: document.querySelector(DOM.inputType).value,
+        description: document.querySelector(DOM.inputDesc).value.trim(),
+        value: Number(document.querySelector(DOM.inputValue).value)
+    };
+},
 
         addListItem(obj, type) {
             var element = type === 'inc' ? DOM.incList : DOM.expList;
@@ -223,7 +223,7 @@ var controller = (function (B, UI) {
 
     var addItem = function () {
         var input = UI.getInput();
-        if (input.description && input.value > 0) {
+        if (input.description.length > 0 && !isNaN(input.value) && input.value > 0) {
             var item = B.addItem(input.type, input.description, input.value);
             UI.addListItem(item, input.type);
             UI.clearFields();
@@ -250,12 +250,22 @@ var controller = (function (B, UI) {
             data.allItems.exp.forEach(i => UI.addListItem(i, 'exp'));
             updateAll();
 
+            // ✅ ADD BUTTON
             document.querySelector(UI.getDOM().inputBtn)
                 .addEventListener('click', addItem);
 
+            // ✅ ENTER KEY
+            document.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    addItem();
+                }
+            });
+
+            // ✅ DELETE ITEM
             document.querySelector(UI.getDOM().container)
                 .addEventListener('click', deleteItem);
 
+            // ✅ RESET BUTTON
             var resetBtn = UI.addResetButton();
             resetBtn.addEventListener('click', function () {
                 if (confirm('Reset all data?')) {
@@ -270,3 +280,4 @@ var controller = (function (B, UI) {
 })(budgetController, UIController);
 
 controller.init();
+
