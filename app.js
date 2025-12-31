@@ -49,7 +49,6 @@ var budgetController = (function () {
             } else {
                 ID = 0;
             }
-
             newItem = type === 'exp' ? new Expense(ID, des, val) : new Income(ID, des, val);
             data.allItems[type].push(newItem);
             return newItem;
@@ -84,12 +83,10 @@ var budgetController = (function () {
             data = { allItems: { exp: [], inc: [] }, totals: { exp: 0, inc: 0 }, budget: 0, percentage: -1 };
         },
 
-        getData: function () { return data; },
-        setData: function (newData) { data = newData; }
+        getData: function () { return data; }
     };
 
 })();
-
 
 // ======================
 // UI CONTROLLER
@@ -110,7 +107,7 @@ var UIController = (function () {
         container: '.container',
         expensesPercLabel: '.item__percentage',
         dateLabel: '.budget__title--month',
-        previousMonthsContainer: '.previous-months'
+        budgetContainer: '.budget'
     };
 
     var formatNumber = function (num, type) {
@@ -194,60 +191,54 @@ var UIController = (function () {
             document.querySelector(DOMstrings.dateLabel).textContent = months[now.getMonth()] + ' ' + now.getFullYear();
         },
 
-        showPreviousMonths: function (months) {
-            var container = document.querySelector(DOMstrings.previousMonthsContainer);
-            container.innerHTML = '';
-            if (months.length === 0) {
-                container.innerHTML = '<p>No previous months saved.</p>';
-                return;
-            }
-            months.forEach(function (month) {
-                var btn = document.createElement('button');
-                btn.textContent = month;
-                btn.className = 'prev-month-btn';
-                container.appendChild(btn);
-            });
-        },
+        getDOMstrings: function () { return DOMstrings; },
 
-        getDOMstrings: function () { return DOMstrings; }
+        createSaveCSVButton: function () {
+            var btn = document.createElement('button');
+            btn.textContent = 'Save CSV';
+            btn.className = 'save-csv-btn';
+            document.querySelector(DOMstrings.budgetContainer).appendChild(btn);
+            return btn;
+        }
     };
 
 })();
-
 
 // ======================
 // GLOBAL CONTROLLER
 // ======================
 var controller = (function (budgetCtrl, UICtrl) {
 
-    var DOM = UICtrl.getDOMstrings();
+    var setupEventListeners = function () {
+        var DOM = UICtrl.getDOMstrings();
 
-    // --- Local Storage ---
-    var saveCurrentMonth = function () {
-        var now = new Date();
-        var monthYear = now.toLocaleString('default', { month: 'long', year: 'numeric' });
-        var allData = JSON.parse(localStorage.getItem('allBudgetData')) || {};
-        allData[monthYear] = budgetCtrl.getData();
-        allData.currentMonth = monthYear;
-        localStorage.setItem('allBudgetData', JSON.stringify(allData));
+        document.querySelector(DOM.inputBtn).addEventListener('click', ctrlAddItem);
+        document.addEventListener('keypress', function (e) { if (e.key === 'Enter') ctrlAddItem(); });
+        document.querySelector(DOM.container).addEventListener('click', ctrlDeleteItem);
+
+        // RESET BUTTON
+        var resetBtn = document.createElement('button');
+        resetBtn.textContent = 'Reset Budget';
+        resetBtn.className = 'reset-btn';
+        document.querySelector(DOM.budgetContainer).appendChild(resetBtn);
+
+        resetBtn.addEventListener('click', function () {
+            if (confirm('Reset all data?')) {
+                budgetCtrl.reset();
+                document.querySelector('.income__list').innerHTML = '';
+                document.querySelector('.expenses__list').innerHTML = '';
+                updateBudget();
+                updatePercentages();
+            }
+        });
+
+        // SAVE CSV BUTTON
+        var saveBtn = UICtrl.createSaveCSVButton();
+        saveBtn.addEventListener('click', function () {
+            saveDataAsCSV();
+        });
     };
 
-    var loadCurrentMonth = function () {
-        var allData = JSON.parse(localStorage.getItem('allBudgetData')) || {};
-        var now = new Date();
-        var monthYear = now.toLocaleString('default', { month: 'long', year: 'numeric' });
-
-        if (allData[monthYear]) {
-            budgetCtrl.setData(allData[monthYear]);
-        }
-    };
-
-    var getPreviousMonths = function () {
-        var allData = JSON.parse(localStorage.getItem('allBudgetData')) || {};
-        return Object.keys(allData).filter(k => k !== 'currentMonth');
-    };
-
-    // --- Update budget & percentages ---
     var updateBudget = function () {
         budgetCtrl.calculateBudget();
         UICtrl.displayBudget(budgetCtrl.getBudget());
@@ -258,7 +249,6 @@ var controller = (function (budgetCtrl, UICtrl) {
         UICtrl.displayPercentages(budgetCtrl.getPercentages());
     };
 
-    // --- Add Item ---
     var ctrlAddItem = function () {
         var input = UICtrl.getInput();
         if (input.description !== "" && !isNaN(input.value) && input.value > 0) {
@@ -270,7 +260,6 @@ var controller = (function (budgetCtrl, UICtrl) {
         }
     };
 
-    // --- Delete Item ---
     var ctrlDeleteItem = function (event) {
         var itemID = event.target.closest('.item')?.id;
         if (itemID) {
@@ -282,74 +271,36 @@ var controller = (function (budgetCtrl, UICtrl) {
         }
     };
 
-    // --- Reset for New Month ---
-    var resetForNewMonth = function () {
-        if (confirm('Save current month and start new month?')) {
-            saveCurrentMonth();
-            budgetCtrl.reset();
-            document.querySelector(DOM.incomeContainer).innerHTML = '';
-            document.querySelector(DOM.expensesContainer).innerHTML = '';
-            updateBudget();
-            updatePercentages();
-            UICtrl.displayMonth();
-            UICtrl.showPreviousMonths(getPreviousMonths());
-        }
-    };
+    // ======================
+    // SAVE CSV FUNCTION
+    // ======================
+    var saveDataAsCSV = function () {
+        var data = budgetCtrl.getData();
+        var csvContent = "Type,Description,Value,Percentage\n";
 
-    // --- View Previous Month ---
-    var viewPreviousMonth = function (month) {
-        var allData = JSON.parse(localStorage.getItem('allBudgetData')) || {};
-        if (allData[month]) {
-            budgetCtrl.setData(allData[month]);
-            document.querySelector(DOM.incomeContainer).innerHTML = '';
-            document.querySelector(DOM.expensesContainer).innerHTML = '';
-            var data = budgetCtrl.getData();
-            data.allItems.inc.forEach(function (cur) { UICtrl.addListItem(cur, 'inc'); });
-            data.allItems.exp.forEach(function (cur) { UICtrl.addListItem(cur, 'exp'); });
-            updateBudget();
-            updatePercentages();
-        }
-    };
-
-    // --- Event Listeners ---
-    var setupEventListeners = function () {
-        document.querySelector(DOM.inputBtn).addEventListener('click', ctrlAddItem);
-        document.addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') ctrlAddItem();
+        data.allItems.inc.forEach(function (item) {
+            csvContent += `Income,${item.description},${item.value},\n`;
         });
-        document.querySelector(DOM.container).addEventListener('click', ctrlDeleteItem);
-
-        // Next Month Button
-        var resetBtn = document.createElement('button');
-        resetBtn.textContent = 'Next Month';
-        resetBtn.className = 'reset-btn';
-        document.querySelector('.budget').appendChild(resetBtn);
-        resetBtn.addEventListener('click', resetForNewMonth);
-
-        // Previous Months Panel
-        var prevContainer = document.createElement('div');
-        prevContainer.className = 'previous-months';
-        document.querySelector('.budget').appendChild(prevContainer);
-
-        UICtrl.showPreviousMonths(getPreviousMonths());
-
-        prevContainer.addEventListener('click', function (e) {
-            if (e.target.classList.contains('prev-month-btn')) {
-                viewPreviousMonth(e.target.textContent);
-            }
+        data.allItems.exp.forEach(function (item) {
+            csvContent += `Expense,${item.description},${item.value},${item.percentage >= 0 ? item.percentage : ''}\n`;
         });
+
+        var blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        var link = document.createElement("a");
+        var url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute("download", "budget_data.csv");
+        link.style.display = "none";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     };
 
     return {
         init: function () {
-            loadCurrentMonth();
-            var data = budgetCtrl.getData();
-            data.allItems.inc.forEach(function (cur) { UICtrl.addListItem(cur, 'inc'); });
-            data.allItems.exp.forEach(function (cur) { UICtrl.addListItem(cur, 'exp'); });
-
+            UICtrl.displayMonth();
             updateBudget();
             updatePercentages();
-            UICtrl.displayMonth();
             setupEventListeners();
         }
     };
