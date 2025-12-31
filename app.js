@@ -35,15 +35,16 @@ var budgetController = (function () {
     };
 
     // ===== LOCAL STORAGE =====
-    var saveData = () =>
+    var saveData = function () {
         localStorage.setItem('budgetData', JSON.stringify(data));
+    };
 
-    var loadData = () => {
-        const stored = localStorage.getItem('budgetData');
+    var loadData = function () {
+        var stored = localStorage.getItem('budgetData');
         if (stored) data = JSON.parse(stored);
     };
 
-    var resetData = () => {
+    var resetData = function () {
         data = {
             allItems: { exp: [], inc: [] },
             totals: { exp: 0, inc: 0 },
@@ -55,11 +56,11 @@ var budgetController = (function () {
 
     return {
         addItem(type, desc, val) {
-            const ID = data.allItems[type].length
-                ? data.allItems[type].at(-1).id + 1
+            var ID = data.allItems[type].length
+                ? data.allItems[type][data.allItems[type].length - 1].id + 1
                 : 0;
 
-            const newItem = type === 'exp'
+            var newItem = type === 'exp'
                 ? new Expense(ID, desc, val)
                 : new Income(ID, desc, val);
 
@@ -93,10 +94,15 @@ var budgetController = (function () {
         },
 
         getBudget() {
-            return { ...data };
+            return {
+                budget: data.budget,
+                totalInc: data.totals.inc,
+                totalExp: data.totals.exp,
+                percentage: data.percentage
+            };
         },
 
-        load,
+        load: loadData,
         reset: resetData,
         getData: () => data
     };
@@ -110,56 +116,57 @@ var budgetController = (function () {
 var UIController = (function () {
 
     var DOM = {
-        type: '.add__type',
-        desc: '.add__description',
-        value: '.add__value',
-        btn: '.add__btn',
+        inputType: '.add__type',
+        inputDesc: '.add__description',
+        inputValue: '.add__value',
+        inputBtn: '.add__btn',
         incList: '.income__list',
         expList: '.expenses__list',
+        budgetLabel: '.budget__value',
+        incLabel: '.budget__income--value',
+        expLabel: '.budget__expenses--value',
+        percLabel: '.budget__expenses--percentage',
         container: '.container',
-        budget: '.budget__value',
-        inc: '.budget__income--value',
-        exp: '.budget__expenses--value',
-        perc: '.budget__expenses--percentage',
         month: '.budget__title--month'
     };
 
-    var format = (n, t) =>
-        `${t === 'exp' ? '-' : '+'} ${Math.abs(n).toFixed(2)}`;
+    var formatNumber = function (num, type) {
+        num = Math.abs(num).toFixed(2);
+        return (type === 'exp' ? '- ' : '+ ') + num;
+    };
 
     return {
         getInput() {
             return {
-                type: document.querySelector(DOM.type).value,
-                desc: document.querySelector(DOM.desc).value,
-                value: +document.querySelector(DOM.value).value
+                type: document.querySelector(DOM.inputType).value,
+                description: document.querySelector(DOM.inputDesc).value,
+                value: parseFloat(document.querySelector(DOM.inputValue).value)
             };
         },
 
-        addItem(obj, type) {
-            const html = `
+        addListItem(obj, type) {
+            var element = type === 'inc' ? DOM.incList : DOM.expList;
+            var html = `
             <div class="item clearfix" id="${type}-${obj.id}">
                 <div class="item__description">
                     ${obj.description}
-                    <span class="delete-x">X</span>
+                    <span class="item__delete--btn delete-x">X</span>
                 </div>
                 <div class="right clearfix">
-                    <div class="item__value">${format(obj.value, type)}</div>
+                    <div class="item__value">${formatNumber(obj.value, type)}</div>
+                    ${type === 'exp' ? '<div class="item__percentage">---</div>' : ''}
                 </div>
             </div>`;
-
-            document
-                .querySelector(type === 'inc' ? DOM.incList : DOM.expList)
-                .insertAdjacentHTML('beforeend', html);
+            document.querySelector(element).insertAdjacentHTML('beforeend', html);
         },
 
-        clearInputs() {
-            document.querySelector(DOM.desc).value = '';
-            document.querySelector(DOM.value).value = '';
-        },
-
-        removeItem(id) {
+        deleteListItem(id) {
             document.getElementById(id)?.remove();
+        },
+
+        clearFields() {
+            document.querySelector(DOM.inputDesc).value = '';
+            document.querySelector(DOM.inputValue).value = '';
         },
 
         clearLists() {
@@ -167,30 +174,37 @@ var UIController = (function () {
             document.querySelector(DOM.expList).innerHTML = '';
         },
 
-        updateBudget(b) {
-            document.querySelector(DOM.budget).textContent = format(b.budget, b.budget >= 0 ? 'inc' : 'exp');
-            document.querySelector(DOM.inc).textContent = format(b.totals.inc, 'inc');
-            document.querySelector(DOM.exp).textContent = format(b.totals.exp, 'exp');
-            document.querySelector(DOM.perc).textContent =
-                b.percentage > 0 ? `${b.percentage}%` : '---';
+        displayBudget(obj) {
+            var type = obj.budget >= 0 ? 'inc' : 'exp';
+            document.querySelector(DOM.budgetLabel).textContent =
+                formatNumber(obj.budget, type);
+            document.querySelector(DOM.incLabel).textContent =
+                formatNumber(obj.totalInc, 'inc');
+            document.querySelector(DOM.expLabel).textContent =
+                formatNumber(obj.totalExp, 'exp');
+            document.querySelector(DOM.percLabel).textContent =
+                obj.percentage > 0 ? obj.percentage + '%' : '---';
         },
 
         displayMonth() {
-            const d = new Date();
-            const m = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+            var now = new Date();
+            var months = [
+                'January','February','March','April','May','June',
+                'July','August','September','October','November','December'
+            ];
             document.querySelector(DOM.month).textContent =
-                `${m[d.getMonth()]} ${d.getFullYear()}`;
+                months[now.getMonth()] + ' ' + now.getFullYear();
         },
 
         addResetButton() {
-            const btn = document.createElement('button');
+            var btn = document.createElement('button');
             btn.textContent = 'Reset Budget';
             btn.className = 'reset-btn';
             document.querySelector('.budget').appendChild(btn);
             return btn;
         },
 
-        DOM
+        getDOM() { return DOM; }
     };
 
 })();
@@ -201,27 +215,29 @@ var UIController = (function () {
 // ======================
 var controller = (function (B, UI) {
 
-    const update = () => {
+    var updateAll = function () {
         B.calculateBudget();
-        UI.updateBudget(B.getBudget());
+        UI.displayBudget(B.getBudget());
+        B.calculatePercentages();
     };
 
-    const addItem = () => {
-        const i = UI.getInput();
-        if (!i.desc || i.value <= 0) return;
-
-        UI.addItem(B.addItem(i.type, i.desc, i.value), i.type);
-        UI.clearInputs();
-        update();
+    var addItem = function () {
+        var input = UI.getInput();
+        if (input.description && input.value > 0) {
+            var item = B.addItem(input.type, input.description, input.value);
+            UI.addListItem(item, input.type);
+            UI.clearFields();
+            updateAll();
+        }
     };
 
-    const deleteItem = e => {
+    var deleteItem = function (e) {
         if (!e.target.classList.contains('delete-x')) return;
-        const id = e.target.closest('.item').id;
-        const [type, num] = id.split('-');
-        B.deleteItem(type, +num);
-        UI.removeItem(id);
-        update();
+        var id = e.target.closest('.item').id;
+        var split = id.split('-');
+        B.deleteItem(split[0], parseInt(split[1]));
+        UI.deleteListItem(id);
+        updateAll();
     };
 
     return {
@@ -229,20 +245,23 @@ var controller = (function (B, UI) {
             UI.displayMonth();
             B.load();
 
-            const data = B.getData();
-            data.allItems.inc.forEach(i => UI.addItem(i, 'inc'));
-            data.allItems.exp.forEach(i => UI.addItem(i, 'exp'));
-            update();
+            var data = B.getData();
+            data.allItems.inc.forEach(i => UI.addListItem(i, 'inc'));
+            data.allItems.exp.forEach(i => UI.addListItem(i, 'exp'));
+            updateAll();
 
-            document.querySelector(UI.DOM.btn).addEventListener('click', addItem);
-            document.querySelector(UI.DOM.container).addEventListener('click', deleteItem);
+            document.querySelector(UI.getDOM().inputBtn)
+                .addEventListener('click', addItem);
 
-            const resetBtn = UI.addResetButton();
-            resetBtn.addEventListener('click', () => {
-                if (confirm('Reset all budget data?')) {
+            document.querySelector(UI.getDOM().container)
+                .addEventListener('click', deleteItem);
+
+            var resetBtn = UI.addResetButton();
+            resetBtn.addEventListener('click', function () {
+                if (confirm('Reset all data?')) {
                     B.reset();
                     UI.clearLists();
-                    update();
+                    updateAll();
                 }
             });
         }
