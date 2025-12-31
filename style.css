@@ -67,12 +67,11 @@ body {
 .budget__expenses {
     padding: 12px;
     text-transform: uppercase;
-    border-radius: 6px;
 }
 
 .budget__income {
     margin-bottom: 10px;
-    background-color: #1b641b;
+    background-color: #1b641b; /* UPDATED INCOME COLOR */
 }
 
 .budget__expenses {
@@ -106,34 +105,6 @@ body {
     background-color: rgba(255, 255, 255, 0.2);
     text-align: center;
     border-radius: 3px;
-}
-
-/**********************************************
-*** BUTTONS
-**********************************************/
-
-.reset-btn,
-.download-btn {
-    width: 100%;
-    margin-top: 10px;
-    padding: 10px;
-    font-size: 14px;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-    background-color: #e0e0e0;
-    color: #333;
-    transition: background-color 0.3s, transform 0.2s;
-}
-
-.reset-btn:hover,
-.download-btn:hover {
-    background-color: #d0d0d0;
-}
-
-.reset-btn:active,
-.download-btn:active {
-    transform: translateY(2px);
 }
 
 /**********************************************
@@ -184,9 +155,12 @@ body {
     font-size: 35px;
     background: none;
     border: none;
-    color: #1b641b;
+    color: #1b641b; /* UPDATED INCOME COLOR */
     cursor: pointer;
+    display: inline-block;
     vertical-align: middle;
+    line-height: 1.1;
+    margin-left: 10px;
 }
 
 .add__btn:active { transform: translateY(2px); }
@@ -195,7 +169,7 @@ body {
 .add__description:focus,
 .add__value:focus {
     outline: none;
-    border: 1px solid #1b641b;
+    border: 1px solid #1b641b; /* UPDATED INCOME COLOR */
 }
 
 .add__btn:focus { outline: none; }
@@ -224,7 +198,7 @@ h2 {
     margin-bottom: 15px;
 }
 
-.icome__title { color: #1b641b; }
+.icome__title { color: #1b641b; } /* UPDATED */
 .expenses__title { color: #A52A2A; }
 
 .item {
@@ -235,7 +209,9 @@ h2 {
 .item:first-child { border-top: 1px solid #e7e7e7; }
 .item:nth-child(even) { background-color: #f7f7f7; }
 
-.item__description { float: left; }
+.item__description {
+    float: left;
+}
 
 .item__value {
     float: left;
@@ -247,7 +223,7 @@ h2 {
     margin-left: 20px;
     transition: transform 0.3s;
     font-size: 11px;
-    background-color: rgba(165, 42, 42, 0.15);
+    background-color: rgba(165, 42, 42, 0.2);
     padding: 3px;
     border-radius: 3px;
     width: 32px;
@@ -256,7 +232,7 @@ h2 {
 
 .income .item__value,
 .income .item__delete--btn {
-    color: #1b641b;
+    color: #1b641b; /* UPDATED */
 }
 
 .expenses .item__value,
@@ -274,6 +250,9 @@ h2 {
     background: none;
     border: none;
     cursor: pointer;
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 1;
     display: none;
 }
 
@@ -281,16 +260,14 @@ h2 {
 .item__delete--btn:active { transform: translateY(2px); }
 
 .item:hover .item__delete--btn { display: block; }
-.item:hover .item__value,
-.item:hover .item__percentage {
-    transform: translateX(-20px);
-}
+.item:hover .item__value { transform: translateX(-20px); }
+.item:hover .item__percentage { transform: translateX(-20px); }
 
 .unpaid {
-    background-color: rgba(165, 42, 42, 0.15) !important;
+    background-color: rgba(165, 42, 42, 0.2) !important;
     cursor: pointer;
+    color: #A52A2A;
 }
 
-.unpaid:hover .item__description {
-    font-weight: 900;
-}
+.unpaid .item__percentage { box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); }
+.unpaid:hover .item__description { font-weight: 900; }
