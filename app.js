@@ -119,7 +119,7 @@ var UIController = (function () {
         inputType: '.add__type',
         inputDescription: '.add__description',
         inputValue: '.add__value',
-        inputBtn: '.record-btn',
+        inputBtn: '.record-btn', // matches the Record button
         incomeContainer: '.income__list',
         expensesContainer: '.expenses__list',
         budgetLabel: '.budget__value',
@@ -215,7 +215,9 @@ var controller = (function (budgetCtrl, UICtrl) {
 
     var setupEventListeners = function () {
         document.querySelector(DOM.inputBtn).addEventListener('click', ctrlAddItem);
-        document.addEventListener('keypress', function(e) { if (e.key === 'Enter') ctrlAddItem(); });
+        document.addEventListener('keypress', function(e) { 
+            if (e.key === 'Enter') ctrlAddItem(); 
+        });
         document.querySelector(DOM.container).addEventListener('click', ctrlDeleteItem);
 
         document.querySelector(DOM.resetBtn).addEventListener('click', function () {
