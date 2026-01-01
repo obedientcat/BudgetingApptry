@@ -119,7 +119,7 @@ var UIController = (function () {
         inputType: '.add__type',
         inputDescription: '.add__description',
         inputValue: '.add__value',
-        inputBtn: '.record-btn', // matches the Record button
+        inputBtn: '.add__btn',
         incomeContainer: '.income__list',
         expensesContainer: '.expenses__list',
         budgetLabel: '.budget__value',
@@ -157,7 +157,7 @@ var UIController = (function () {
                         <div class="right clearfix">
                             <div class="item__value">${formatNumber(obj.value, 'inc')}</div>
                             <div class="item__delete">
-                                <button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button>
+                                <button class="item__delete--btn">×</button>
                             </div>
                         </div>
                     </div>`;
@@ -168,7 +168,7 @@ var UIController = (function () {
                         <div class="right clearfix">
                             <div class="item__value">${formatNumber(obj.value, 'exp')}</div>
                             <div class="item__delete">
-                                <button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button>
+                                <button class="item__delete--btn">×</button>
                             </div>
                         </div>
                     </div>`;
@@ -215,11 +215,8 @@ var controller = (function (budgetCtrl, UICtrl) {
 
     var setupEventListeners = function () {
         document.querySelector(DOM.inputBtn).addEventListener('click', ctrlAddItem);
-        document.addEventListener('keypress', function(e) { 
-            if (e.key === 'Enter') ctrlAddItem(); 
-        });
+        document.addEventListener('keypress', function(e) { if (e.key === 'Enter') ctrlAddItem(); });
         document.querySelector(DOM.container).addEventListener('click', ctrlDeleteItem);
-
         document.querySelector(DOM.resetBtn).addEventListener('click', function () {
             if (confirm('Reset all data?')) {
                 budgetCtrl.reset();
@@ -228,7 +225,6 @@ var controller = (function (budgetCtrl, UICtrl) {
                 updateBudget();
             }
         });
-
         document.querySelector(DOM.downloadBtn).addEventListener('click', downloadCSV);
     };
 
@@ -248,12 +244,14 @@ var controller = (function (budgetCtrl, UICtrl) {
     };
 
     var ctrlDeleteItem = function (event) {
-        var itemID = event.target.closest('.item')?.id;
-        if (itemID) {
-            var splitID = itemID.split('-');
-            budgetCtrl.deleteItem(splitID[0], parseInt(splitID[1]));
-            UICtrl.deleteListItem(itemID);
-            updateBudget();
+        if (event.target.classList.contains('item__delete--btn')) {
+            var itemID = event.target.closest('.item')?.id;
+            if (itemID) {
+                var splitID = itemID.split('-');
+                budgetCtrl.deleteItem(splitID[0], parseInt(splitID[1]));
+                UICtrl.deleteListItem(itemID);
+                updateBudget();
+            }
         }
     };
 
