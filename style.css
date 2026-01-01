@@ -121,7 +121,7 @@ body {
 }
 
 .add__type {
-    width: 120px; /* Just enough for full text */
+    width: 120px; /* Just wide enough to show full text */
     border: 1px solid #e7e7e7;
     height: 44px;
     font-size: 16px;
@@ -180,16 +180,8 @@ body {
     border: 1px solid #1b641b;
 }
 
-/***** HINT TEXT *****/
-.add__hint {
-    display: block;
-    text-align: center; /* centered under inputs */
-    margin-top: 8px;
-    font-size: 12px;
-    color: #555;
-}
-
-/***** LISTS *****/
+/**********************************************
+*** LISTS *****/
 .container {
     width: 1000px;
     margin: 60px auto;
@@ -219,7 +211,6 @@ h2 {
 .item {
     padding: 13px;
     border-bottom: 1px solid #e7e7e7;
-    position: relative;
 }
 
 .item:first-child { border-top: 1px solid #e7e7e7; }
@@ -258,14 +249,13 @@ h2 {
 }
 
 .item__delete {
-    float: right;
-    margin-left: 10px;
+    float: left;
 }
 
 .item__delete--btn {
-    font-size: 18px;
-    background: #A52A2A;
-    color: #fff;
+    font-size: 16px;
+    background: #bbb; /* light gray circle */
+    color: #fff;      /* white X */
     border: none;
     border-radius: 50%;
     width: 22px;
@@ -274,15 +264,16 @@ h2 {
     line-height: 18px;
     text-align: center;
     display: none;
-    transition: background 0.25s;
-}
-
-.item__delete--btn:hover {
-    background: #ff4d4d;
+    transition: background 0.25s, transform 0.15s;
 }
 
 .item:hover .item__delete--btn {
     display: inline-block;
+}
+
+.item__delete--btn:hover {
+    background: #e74c3c; /* red on hover */
+    transform: scale(1.1);
 }
 
 .item:hover .item__value { transform: translateX(-20px); }
@@ -324,4 +315,15 @@ h2 {
 .budget .reset-btn:focus,
 .budget .download-btn:focus {
     outline: none;
+}
+
+/**********************************************
+*** HINT TEXT
+**********************************************/
+.add__hint {
+    display: block;
+    text-align: left;
+    margin-top: 5px;
+    font-size: 12px;
+    color: #555;
 }
