@@ -32,7 +32,7 @@
                 </div>
             </div>
 
-            <!-- ACTION BUTTONS -->
+            <!-- Buttons -->
             <button class="reset-btn">Reset Budget</button>
             <button class="download-btn">Download Data</button>
         </div>
@@ -41,38 +41,14 @@
     <div class="bottom">
         <div class="add">
             <div class="add__container">
-
-                <!-- TYPE SELECT -->
                 <select class="add__type">
                     <option value="inc" selected>Income (+)</option>
                     <option value="exp">Expense (-)</option>
                 </select>
-
-                <!-- DESCRIPTION -->
-                <input
-                    type="text"
-                    class="add__description"
-                    placeholder="Description (e.g., Salary, Food)"
-                >
-
-                <!-- AMOUNT -->
-                <input
-                    type="number"
-                    class="add__value"
-                    placeholder="Amount (&#8369;)"
-                >
-
-                <!-- ADD BUTTON -->
-                <button class="add__btn" title="Record entry">
-                    <i class="ion-ios-checkmark-outline"></i>
-                    Record
-                </button>
-
-            </div>
-
-            <!-- USER GUIDANCE -->
-            <div style="text-align:center; margin-top:8px; font-size:13px; color:#888;">
-                Press <strong>Enter</strong> or click <strong>Record</strong> to add an item
+                <input type="text" class="add__description" placeholder="Add description (e.g., Salary)">
+                <input type="number" class="add__value" placeholder="Amount (₱)">
+                <button class="add__btn"><i class="ion-ios-checkmark-outline"></i></button>
+                <span class="add__hint">Press Enter or click ✓ to record</span>
             </div>
         </div>
 
