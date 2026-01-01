@@ -30,7 +30,6 @@ var budgetController = (function () {
         data.totals[type] = sum;
     };
 
-    // ===== LOCAL STORAGE =====
     var saveData = function () {
         localStorage.setItem('budgetData', JSON.stringify(data));
     };
@@ -85,9 +84,7 @@ var budgetController = (function () {
         calculateBudget: function () {
             calculateTotal('exp');
             calculateTotal('inc');
-
             data.budget = data.totals.inc - data.totals.exp;
-
             if (data.totals.inc > 0) {
                 data.percentage = Math.round((data.totals.exp / data.totals.inc) * 100);
             } else {
@@ -122,7 +119,7 @@ var UIController = (function () {
         inputType: '.add__type',
         inputDescription: '.add__description',
         inputValue: '.add__value',
-        inputBtn: '.add__btn',
+        inputBtn: '.record-btn',
         incomeContainer: '.income__list',
         expensesContainer: '.expenses__list',
         budgetLabel: '.budget__value',
@@ -138,7 +135,7 @@ var UIController = (function () {
 
     var formatNumber = function (num, type) {
         num = Math.abs(num).toFixed(2);
-        return (type === 'exp' ? '- ' : '+ ') + num;
+        return (type === 'exp' ? '- ₱' : '+ ₱') + num;
     };
 
     return {
@@ -220,6 +217,7 @@ var controller = (function (budgetCtrl, UICtrl) {
         document.querySelector(DOM.inputBtn).addEventListener('click', ctrlAddItem);
         document.addEventListener('keypress', function(e) { if (e.key === 'Enter') ctrlAddItem(); });
         document.querySelector(DOM.container).addEventListener('click', ctrlDeleteItem);
+
         document.querySelector(DOM.resetBtn).addEventListener('click', function () {
             if (confirm('Reset all data?')) {
                 budgetCtrl.reset();
@@ -228,6 +226,7 @@ var controller = (function (budgetCtrl, UICtrl) {
                 updateBudget();
             }
         });
+
         document.querySelector(DOM.downloadBtn).addEventListener('click', downloadCSV);
     };
 
