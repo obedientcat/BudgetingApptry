@@ -18,7 +18,7 @@ body {
     font-family: Open Sans;
     font-size: 16px;
     position: relative;
-    height: 100vh;
+    min-height: 100vh;
     font-weight: 400;
 }
 
@@ -119,19 +119,23 @@ body {
 .add__container {
     margin: 0 auto;
     text-align: center;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
 }
 
 .add__type {
-    width: 120px; /* Wider to show full text */
+    width: 120px; /* wide enough to show full text */
     border: 1px solid #e7e7e7;
     height: 44px;
     font-size: 16px;
     color: inherit;
     background-color: #fff;
-    margin-right: 10px;
     font-weight: 300;
     border-radius: 5px;
-    padding-left: 5px;
+    padding-left: 8px;
     transition: border 0.3s;
     cursor: pointer;
 }
@@ -144,7 +148,6 @@ body {
     font-family: inherit;
     font-size: 14px;
     padding: 12px 15px;
-    margin-right: 10px;
     border-radius: 5px;
     transition: border 0.3s;
 }
@@ -179,6 +182,14 @@ body {
 .add__value:focus {
     outline: none;
     border: 1px solid #1b641b;
+}
+
+/***** HINT TEXT *****/
+.add__hint {
+    flex-basis: 100%;
+    text-align: center;
+    font-size: 12px;
+    color: #555;
 }
 
 /***** LISTS *****/
@@ -304,15 +315,4 @@ h2 {
 .budget .reset-btn:focus,
 .budget .download-btn:focus {
     outline: none;
-}
-
-/**********************************************
-*** HINT TEXT
-**********************************************/
-.add__hint {
-    display: block;
-    text-align: left;
-    margin-top: 5px;
-    font-size: 12px;
-    color: #555;
 }
