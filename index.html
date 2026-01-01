@@ -32,7 +32,6 @@
                 </div>
             </div>
 
-            <!-- Buttons -->
             <button class="reset-btn">Reset Budget</button>
             <button class="download-btn">Download Data</button>
         </div>
@@ -42,8 +41,8 @@
         <div class="add">
             <div class="add__container">
 
-                <!-- TYPE -->
-                <select class="add__type">
+                <!-- TYPE (WIDER SO TEXT IS VISIBLE) -->
+                <select class="add__type" style="min-width: 150px;">
                     <option value="inc" selected>Income (+)</option>
                     <option value="exp">Expense (-)</option>
                 </select>
@@ -55,7 +54,7 @@
                     placeholder="Description (e.g., Salary, Food)"
                 >
 
-                <!-- VALUE -->
+                <!-- AMOUNT -->
                 <input
                     type="number"
                     class="add__value"
@@ -63,14 +62,16 @@
                 >
 
                 <!-- ADD BUTTON -->
-                <button class="add__btn" title="Add item">
-                    <i class="ion-ios-checkmark-outline"></i> Add
+                <button class="add__btn">
+                    <i class="ion-ios-plus-outline"></i> Add
                 </button>
 
             </div>
 
-            <!-- USER HINT -->
-            <p class="add__hint">Press Enter or click ✓ to add</p>
+            <!-- CLEAR, HONEST HINT -->
+            <div class="add__hint">
+                Press Enter or click <strong>Add</strong> to record
+            </div>
         </div>
 
         <div class="container clearfix">
