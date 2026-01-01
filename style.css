@@ -1,7 +1,6 @@
 /**********************************************
 *** GENERAL
 **********************************************/
-
 * {
     margin: 0;
     padding: 0;
@@ -30,10 +29,9 @@ body {
 /**********************************************
 *** TOP PART
 **********************************************/
-
 .top {
     height: 40vh;
-    background-image: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)), url(back.png);
+    background-image: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url(back.png);
     background-size: cover;
     background-position: center;
     position: relative;
@@ -110,8 +108,6 @@ body {
 /**********************************************
 *** BOTTOM PART
 **********************************************/
-
-/***** FORM *****/
 .add {
     padding: 14px;
     border-bottom: 1px solid #e7e7e7;
@@ -121,18 +117,20 @@ body {
 .add__container {
     margin: 0 auto;
     text-align: center;
+    position: relative;
 }
 
 .add__type {
-    width: 55px;
+    width: 95px; /* just enough to show "Income (+)" fully */
     border: 1px solid #e7e7e7;
     height: 44px;
-    font-size: 18px;
+    font-size: 16px;
     color: inherit;
     background-color: #fff;
     margin-right: 10px;
     font-weight: 300;
     transition: border 0.3s;
+    border-radius: 5px;
 }
 
 .add__description,
@@ -148,18 +146,29 @@ body {
     transition: border 0.3s;
 }
 
-.add__description { width: 400px; }
+.add__description { width: 300px; }
 .add__value { width: 100px; }
 
+.add__value::placeholder {
+    content: "Amount (₱)";
+}
+
 .add__btn {
-    font-size: 35px;
-    background: none;
+    font-size: 30px;
+    background: #1b641b;
     border: none;
-    color: #1b641b;
+    color: #fff;
     cursor: pointer;
     vertical-align: middle;
     line-height: 1.1;
     margin-left: 10px;
+    border-radius: 5px;
+    padding: 8px 12px;
+    transition: background 0.25s ease, transform 0.15s ease;
+}
+
+.add__btn:hover {
+    background-color: #145314;
 }
 
 .add__btn:active { transform: translateY(2px); }
@@ -172,6 +181,15 @@ body {
 }
 
 .add__btn:focus { outline: none; }
+
+/* Hint text */
+.add__hint {
+    font-size: 12px;
+    color: #888;
+    display: block;
+    margin-top: 6px;
+    text-align: center;
+}
 
 /***** LISTS *****/
 .container {
@@ -263,7 +281,6 @@ h2 {
 /**********************************************
 *** ACTION BUTTONS
 **********************************************/
-
 .budget .reset-btn,
 .budget .download-btn {
     width: 48%;
