@@ -39,10 +39,10 @@
 
     <div class="bottom">
         <div class="add">
-            <div class="add__container">
+            <div class="add__container" style="text-align:center;">
 
-                <!-- TYPE (WIDER SO TEXT IS VISIBLE) -->
-                <select class="add__type" style="min-width: 150px;">
+                <!-- TYPE (JUST ENOUGH WIDTH) -->
+                <select class="add__type" style="width:130px;">
                     <option value="inc" selected>Income (+)</option>
                     <option value="exp">Expense (-)</option>
                 </select>
@@ -66,11 +66,15 @@
                     <i class="ion-ios-plus-outline"></i> Add
                 </button>
 
-            </div>
+                <!-- CENTERED HINT -->
+                <div style="
+                    margin-top: 8px;
+                    font-size: 13px;
+                    color: #777;
+                ">
+                    Press Enter or click <strong>Add</strong> to record
+                </div>
 
-            <!-- CLEAR, HONEST HINT -->
-            <div class="add__hint">
-                Press Enter or click <strong>Add</strong> to record
             </div>
         </div>
 
