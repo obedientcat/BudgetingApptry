@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:100,300,400,600" rel="stylesheet" type="text/css">
+    <link href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet" type="text/css">
+    <link type="text/css" rel="stylesheet" href="style.css">
+    <title>iBudget</title>
+</head>
+<body>
+
+    <div class="top">
+        <div class="budget">
+            <div class="budget__title">
+                Available Budget in <span class="budget__title--month">%Month%</span>:
+            </div>
+            <div class="budget__value">+ ₱0.00</div>
+
+            <div class="budget__income clearfix">
+                <div class="budget__income--text">Income</div>
+                <div class="right">
+                    <div class="budget__income--value">+ ₱0.00</div>
+                    <div class="budget__income--percentage">&nbsp;</div>
+                </div>
+            </div>
+
+            <div class="budget__expenses clearfix">
+                <div class="budget__expenses--text">Expenses</div>
+                <div class="right clearfix">
+                    <div class="budget__expenses--value">- ₱0.00</div>
+                    <div class="budget__expenses--percentage">---</div>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <button class="reset-btn">Reset Budget</button>
+            <button class="download-btn">Download Data</button>
+            <button class="advanced-toggle-btn" type="button" aria-pressed="false">Advanced Mode</button>
+
+            <!-- Advanced: quick status (hidden in basic mode) -->
+            <div class="advanced-status" hidden>
+                <div class="advanced-status__row">
+                    <div class="advanced-status__label">Financial Risk Level</div>
+                    <div class="advanced-status__value risk-level" data-risk="unknown">---</div>
+                </div>
+                <div class="advanced-status__hint">Based on total expenses vs total income</div>
+                <div class="advanced-warning" hidden></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom">
+        <div class="add">
+            <div class="add__container">
+                <select class="add__type">
+                    <option value="inc" selected>Income (+)</option>
+                    <option value="exp">Expense (-)</option>
+                </select>
+
+                <!-- Advanced: category selector (only for expenses) -->
+                <select class="add__category" hidden>
+                    <option value="Food">Food</option>
+                    <option value="Transportation">Transportation</option>
+                    <option value="School">School</option>
+                    <option value="Bills">Bills</option>
+                    <option value="Personal">Personal</option>
+                    <option value="Others" selected>Others</option>
+                </select>
+
+                <input type="text" class="add__description" placeholder="Add description (e.g., Salary)">
+                <input type="number" class="add__value" placeholder="Amount (₱)">
+                <button class="add__btn">Record</button>
+                <span class="add__hint">Press Enter or click Record to add</span>
+            </div>
+        </div>
+
+        <!-- Advanced panels -->
+        <div class="advanced-panels" hidden>
+            <div class="advanced-card">
+                <h3>Budget Categories (Limits & Warnings)</h3>
+                <div class="category-limits">
+                    <div class="category-limits__row">
+                        <label>Category</label>
+                        <label>Limit (₱)</label>
+                        <label>Spent (₱)</label>
+                    </div>
+                    <div class="category-limits__list"></div>
+                </div>
+                <div class="advanced-card__hint">Set limits per category. If expenses exceed the limit, a warning will appear.</div>
+            </div>
+
+            <div class="advanced-card">
+                <h3>Savings Goal</h3>
+                <div class="savings-grid">
+                    <div class="savings-field">
+                        <label for="savings-goal">Goal Amount (₱)</label>
+                        <input id="savings-goal" class="savings__goal" type="number" min="0" placeholder="e.g., 20000">
+                    </div>
+                    <div class="savings-field">
+                        <label for="savings-current">Current Savings (₱)</label>
+                        <input id="savings-current" class="savings__current" type="number" min="0" placeholder="e.g., 9000">
+                    </div>
+                </div>
+                <div class="savings-progress">
+                    <div class="savings-progress__bar"><div class="savings-progress__fill" style="width:0%"></div></div>
+                    <div class="savings-progress__text">0% of goal</div>
+                </div>
+
+                <div class="savings-add">
+                    <input class="savings__add" type="number" min="0" placeholder="Add to savings (₱)">
+                    <button class="savings__addbtn" type="button">Add</button>
+                </div>
+                <div class="advanced-card__hint">Adding to savings will deduct from your available budget (it is recorded as an expense under “Savings”).</div>
+            </div>
+        </div>
+
+        <div class="container clearfix">
+            <div class="income">
+                <h2 class="icome__title">Income</h2>
+                <div class="income__list"></div>
+            </div>
+
+            <div class="expenses">
+                <h2 class="expenses__title">Expenses</h2>
+                <div class="expenses__list"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
