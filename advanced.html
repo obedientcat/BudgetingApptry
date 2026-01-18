@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:100,300,400,600" rel="stylesheet" type="text/css">
+    <link href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css" rel="stylesheet" type="text/css">
+    <link type="text/css" rel="stylesheet" href="style.css">
+    <title>iBudget - Advanced</title>
+</head>
+<body>
+
+    <div class="top">
+        <div class="budget">
+            <div class="budget__title">
+                Available Budget in <span class="budget__title--month">%Month%</span>:
+            </div>
+            <div class="budget__value">+ ₱0.00</div>
+
+            <div class="budget__income clearfix">
+                <div class="budget__income--text">Income</div>
+                <div class="right">
+                    <div class="budget__income--value">+ ₱0.00</div>
+                    <div class="budget__income--percentage">&nbsp;</div>
+                </div>
+            </div>
+
+            <div class="budget__expenses clearfix">
+                <div class="budget__expenses--text">Expenses</div>
+                <div class="right clearfix">
+                    <div class="budget__expenses--value">- ₱0.00</div>
+                    <div class="budget__expenses--percentage">---</div>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="budget__actions">
+                <button class="reset-btn">Reset Budget</button>
+                <button class="download-btn">Download Data</button>
+                <a class="mode-btn" href="index.html">Basic Mode</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom">
+        <div class="add">
+            <div class="add__container add__container--advanced">
+                <select class="add__type">
+                    <option value="inc" selected>Income (+)</option>
+                    <option value="exp">Expense (-)</option>
+                </select>
+                <input type="text" class="add__description" placeholder="Add description (e.g., Salary)">
+                <input type="text" class="add__category" placeholder="Category (e.g., Food)">
+                <input type="number" class="add__value" placeholder="Amount (₱)">
+                <button class="add__btn">Record</button>
+                <span class="add__hint">Press Enter or click Record to add</span>
+            </div>
+        </div>
+
+        <div class="overview">
+            <div class="overview__header">
+                <h3>Monthly Summary</h3>
+                <span class="summary__month"></span>
+            </div>
+            <div class="summary">
+                <div class="summary__item">
+                    <span class="summary__label">Income</span>
+                    <span class="summary__value summary__income">+ ₱0.00</span>
+                </div>
+                <div class="summary__item">
+                    <span class="summary__label">Expenses</span>
+                    <span class="summary__value summary__expenses">- ₱0.00</span>
+                </div>
+                <div class="summary__item">
+                    <span class="summary__label">Balance</span>
+                    <span class="summary__value summary__balance">+ ₱0.00</span>
+                </div>
+            </div>
+            <div class="chart">
+                <div class="pie__chart" role="img" aria-label="Income vs expenses pie chart"></div>
+                <div class="pie__legend">
+                    <div class="pie__legend-item">
+                        <span class="legend__dot legend__dot--income"></span>
+                        <span class="pie__income">Income 0%</span>
+                    </div>
+                    <div class="pie__legend-item">
+                        <span class="legend__dot legend__dot--expense"></span>
+                        <span class="pie__expense">Expenses 0%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="advanced">
+            <div class="advanced__section">
+                <h3>Budget Categories &amp; Limits</h3>
+                <div class="category__form">
+                    <input type="text" class="category__name" placeholder="Category name (e.g., Food)">
+                    <input type="number" class="category__limit" placeholder="Limit (₱)">
+                    <button class="category__btn">Set Limit</button>
+                </div>
+                <div class="category__list"></div>
+                <div class="category__warning" aria-live="polite"></div>
+            </div>
+
+            <div class="advanced__section">
+                <h3>Financial Risk Level</h3>
+                <div class="risk">
+                    <div class="risk__level">Low</div>
+                    <div class="risk__details">Expenses are 0% of income.</div>
+                </div>
+            </div>
+
+            <div class="advanced__section">
+                <h3>Savings Goals</h3>
+                <div class="savings__form">
+                    <input type="text" class="savings__name" placeholder="Goal name (e.g., College Fund)">
+                    <input type="number" class="savings__target" placeholder="Target amount (₱)">
+                    <button class="savings__add-btn">Add Goal</button>
+                </div>
+                <div class="savings__contribution">
+                    <select class="savings__select"></select>
+                    <input type="number" class="savings__amount" placeholder="Add savings (₱)">
+                    <button class="savings__contribute-btn">Add Contribution</button>
+                </div>
+                <div class="savings__list"></div>
+            </div>
+        </div>
+
+        <div class="container clearfix">
+            <div class="income">
+                <h2 class="icome__title">Income</h2>
+                <div class="income__list"></div>
+            </div>
+
+            <div class="expenses">
+                <h2 class="expenses__title">Expenses</h2>
+                <div class="expenses__list"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
